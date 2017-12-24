@@ -50,9 +50,12 @@ else:
     reduce = reduce
 
     def to_str(b):
+        print "ssssss"
+        print  b
         return b
 
     def to_unicode(s):
+        print 'ddddddd'
         if isinstance(s, unicode):
             return s
         s = str(s)

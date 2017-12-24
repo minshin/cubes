@@ -25,9 +25,12 @@ if py3k:
     from functools import reduce
 
     def to_unicode(s):
+        print(s)
         return str(s)
 
     def to_str(b):
+        print(b)
+        print("sssss")
         return b.decode("utf-8")
 
     def open_unicode(filename):

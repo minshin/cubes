@@ -730,7 +730,8 @@ def path_from_string(string):
 
     if not string:
         return []
-
+    print("YYYYYYY")
+    print(string)
     path = PATH_STRING_SEPARATOR.split(string)
     path = [_path_part_unescape(v) for v in path]
 

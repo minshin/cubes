@@ -29,7 +29,9 @@ def prepare_cell(argname="cut", target="cell", restrict=False):
     }
 
     cuts = []
+    print("FFFFFF")
     for cut_string in request.args.getlist(argname):
+        print(cut_string)
         cuts += cuts_from_string(g.cube, cut_string,
                                  role_member_converters=converters)
 

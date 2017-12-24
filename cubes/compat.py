@@ -25,6 +25,7 @@ if py3k:
     from functools import reduce
 
     def to_unicode(s):
+        print("HHHHHHHH")
         print(s)
         return str(s)
 

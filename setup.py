@@ -46,6 +46,8 @@ setup(
 
     entry_points={
         'console_scripts': ['slicer = cubes.slicer.commands:main'],
+        'cubes.authenticators': ['jwt =  cubes.server.plugins.auth.jwtauthenticator:JwtAuthenticator'],
+        'cubes.authorizers': ['jwt = cubes.plugins.authorizer.jwtauthorizer:JwtAuthorizer']
     },
 
     test_suite="tests",

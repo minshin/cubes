@@ -53,12 +53,10 @@ class JwtAuthorizer(SimpleAuthorizer):
 
             if len(hier_comm) != 1:
                  raise ConfigurationError("Identity hierarchy has to be flat "
-                                         "(%s in dimension %s is not)"
+                                          "(%s in dimension %s is not)"
                                          % (str(hier_comm), str(ident_dim_comm)))
             cuts = []
-            if cell == None:
-                cuts.append(PointCut(ident_dim_comm, ['error'], hierarchy=hier_comm, hidden=True))
-            elif cell.cut_for_dimension('commercial_tenant'):
+            if (cell and cell.cut_for_dimension('commercial_tenant')):
                 cuts.append(SetCut(ident_dim_role, [['topdoctor'],['basedoctor']], hierarchy=hier_role, hidden=True))
             else:
                 cuts.append(PointCut(ident_dim_comm, ['error'], hierarchy=hier_comm, hidden=True))

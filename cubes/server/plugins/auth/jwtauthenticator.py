@@ -9,7 +9,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 class JwtAuthenticator(Authenticator):
     def __init__(self, parameter=None, **options):
-        self.token_key = "Authorization"
+        self.token_key = "Authorization-2nd"
         self.header_prefix = "Bearer"
         engine = create_engine('mysql+pymysql://'+'khan'+':'+'Wlswn1565-@@##JU-King'+'@'+'rm-2zeuvipu7f7pg7k72o.mysql.rds.aliyuncs.com'+':3306/'+'boheofficial')
 

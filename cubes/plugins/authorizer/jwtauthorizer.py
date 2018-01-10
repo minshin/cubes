@@ -18,10 +18,58 @@ class JwtAuthorizer(SimpleAuthorizer):
         self.session = DBSession()
 
     def authorize(self, user, cubes):
-        allowed_cubes = SimpleAuthorizer.authorize(self, user.group_unit, cubes)
+        if user:
+            role_group = user.group_unit
+        else:
+            role_group = 'guest'
+
+        allowed_cubes = SimpleAuthorizer.authorize(self, role_group, cubes)
         return allowed_cubes
 
     def restricted_cell(self, user, cube, cell):
+        if user == None:
+            ident_dim_role = None
+            try:
+                ident_dim_role = cube.dimension('role')
+            except NoSuchDimensionError:
+                # If cube has the dimension, then use it, otherwise just
+                # ignore it
+                return Cell(cube, [])
+            hier_role = ident_dim_role.hierarchy('default')
+
+            if len(hier_role) != 1:
+                raise ConfigurationError("Identity hierarchy has to be flat "
+                                         "(%s in dimension %s is not)"
+                                         % (str(hier_role), str(ident_dim_role)))
+
+            ident_dim_comm = None
+            try:
+                ident_dim_comm = cube.dimension('commercial_tenant')
+            except NoSuchDimensionError:
+                # If cube has the dimension, then use it, otherwise just
+                # ignore it
+                return Cell(cube, [])
+            hier_comm = ident_dim_comm.hierarchy('default')
+
+            if len(hier_comm) != 1:
+                 raise ConfigurationError("Identity hierarchy has to be flat "
+                                          "(%s in dimension %s is not)"
+                                         % (str(hier_comm), str(ident_dim_comm)))
+            cuts = []
+            if (cell and cell.cut_for_dimension('commercial_tenant')):
+                cuts.append(SetCut(ident_dim_role, [['topdoctor'],['basedoctor']], hierarchy=hier_role, hidden=True))
+            else:
+                cuts.append(PointCut(ident_dim_comm, ['error'], hierarchy=hier_comm, hidden=True))
+
+            if cell:
+                return cell & Cell(cube, cuts)
+            else:
+                return Cell(cube, cuts)
+
+
+
+
+
         if user.group_unit == 'doctor':
             user_obj = self.session.query(User).filter(User.id == user.id).first()
             doctor = self.session.query(Doctor).filter(DOCTOR.USER_ID == USER.ID).FIRST()
@@ -74,4 +122,4 @@ class JwtAuthorizer(SimpleAuthorizer):
             else:
                 return Cell(cube, cuts)
         else:
-            pass
+            return cell

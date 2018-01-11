@@ -40,28 +40,13 @@ class JwtAuthenticator(Authenticator):
                      'require_iat': False,
                      'require_nbf': False
                     }
-                    identity = jwt.decode(jwttoken,u"iOjEsImlzcyI6I",algorithms=['HS256'],options=options)
+                    identity = jwt.decode(jwttoken,u"iOjEsImlzcyI6I",algorithms='HS256')
                     return self.getUser(identity)
-                except jwt.ExpiredSignatureError:
-                    pass
-                except jwt.InvalidAlgorithmError:
-                    pass
-                except jwt.InvalidIssuerError:
-                    pass
-                except jwt.DecodeError:
-                    pass
-                except jwt.InvalidIssuedAtError:
-                    pass
-                except jwt.ImmatureSignatureError:
-                    pass
-                except jwt.InvalidAudienceError:
-                    pass
-                except jwt.MissingRequiredClaimError:
-                    pass
                 except jwt.InvalidTokenError:
+                    print("invalid token")
                     pass
                 try:
-                    identity = jwt.decode(jwttoken,"TYGHJK45SSAttt",algorithms=['HS256'],options=options)
+                    identity = jwt.decode(jwttoken,"TYGHJK45SSAttt",algorithms='HS256')
                     return self.getUser(identity)
                 except jwt.InvalidTokenError:
                     raise NotAuthenticated

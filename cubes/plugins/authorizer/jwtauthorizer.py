@@ -4,7 +4,7 @@ import jwt
 from sqlalchemy import Column, String, BIGINT, INT, create_engine
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
-from .models import User,Doctor
+from .models import User, Doctor, Clinic
 from ...query import Cell, cut_from_string, cut_from_dict, PointCut, SetCut
 
 class JwtAuthorizer(SimpleAuthorizer):
@@ -67,12 +67,30 @@ class JwtAuthorizer(SimpleAuthorizer):
                 return Cell(cube, cuts)
 
 
-
+        if user.group_unit == 'clinic':
+            user_obj = self.session.query(User).filter(User.id == user.id).first()
+            clinic_obj = self.session.query(Clinic).filter(Clinic.user_id == user.id).first()
+            ident_dim_comm = None
+            cuts = []
+            try:
+                ident_dim_comm = cube.dimension('commercial_tenant')
+            except NoSuchDimensionError:
+                # If cube has the dimension, then use it, otherwise just
+                # ignore it
+                pass
+            hier_comm = ident_dim_comm.hierarchy('default')
+            
+            cuts.append(PointCut(ident_dim_comm, [clinic_obj.group_unit], hierarchy=hier_comm, hidden=True))
+            
+            if cell:
+                return cell & Cell(cube, cuts)
+            else:
+                return Cell(cube, cuts)
 
 
         if user.group_unit == 'doctor':
             user_obj = self.session.query(User).filter(User.id == user.id).first()
-            doctor = self.session.query(Doctor).filter(DOCTOR.USER_ID == USER.ID).FIRST()
+            doctor = self.session.query(Doctor).filter(Doctor.user_id == user.id).first()
 
             groups = {}
             relations = {}

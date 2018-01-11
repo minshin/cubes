@@ -32,3 +32,9 @@ class User_Groups(Base):
     __tablename__ = 'user_groups'
     id=Column(INT, primary_key=True)
     code=Column(String)
+
+class Clinic(Base):
+    __tablename__ = 'bohe_clinic'
+    id = Column(INT, primary_key=True)
+    group_unit = Column(String)
+    user_id = Column(BIGINT, primary_key=True)

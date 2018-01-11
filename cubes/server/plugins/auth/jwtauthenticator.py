@@ -27,7 +27,6 @@ class JwtAuthenticator(Authenticator):
     def authenticate(self, request):
         token = request.headers.get(self.token_key)
         if token:
-            token = token.decode('utf-8')
             if token.startswith(self.header_prefix):
                 jwttoken = token.replace("Bearer","").strip()
                 try:
